@@ -4,7 +4,7 @@ import retrofit2.http.*
 import retrofit2.Call
 
 interface ApiService {
-    @GET("genres")
+    @GET("genre/")
     fun getGenres(): Call<Genre>?
 
 }

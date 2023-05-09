@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appcent_case_study.my_classes.ApiService
+import com.example.appcent_case_study.my_classes.DataItem
 import com.example.appcent_case_study.my_classes.Genre
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,12 +21,12 @@ class HomeViewModel : ViewModel() {
         value = "This is home Fragment"
     }
 
-    private val _data = MutableLiveData<String>().apply {
-        value = "TEST DATA"
+    private val _data = MutableLiveData<List<DataItem?>?>().apply {
+        value = null
     }
 
     val text: LiveData<String> = _text
-    var data: LiveData<String> = _data
+    var data: LiveData<List<DataItem?>?> = _data
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -40,7 +40,7 @@ class HomeViewModel : ViewModel() {
     fun getMyData(){
 
         val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl("https://api.deezer.com/genre/")
+            .baseUrl("https://api.deezer.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -49,34 +49,38 @@ class HomeViewModel : ViewModel() {
         val retrofitData = apiService.getGenres()
 
         retrofitData?.enqueue(object : Callback<Genre> {
-            override fun onResponse(call: Call<Genre>?, response: Response<Genre>?) {
-
-                val json = Gson().toJson(response?.body())
-                Log.d("RESPONSE_JSON", json + "\"Response code: ${response?.body()}\"")
-
+            override fun onResponse(call: Call<Genre>, response: Response<Genre>) {
                 val responseBody = response?.body()
                 if (responseBody != null) {
                     Log.d("SUCCESS", responseBody.toString())
                     val myStrBuilder = StringBuilder()
 
-                    responseBody.data?.forEach {
-                        it?.name?.let { name ->
-                            myStrBuilder.append("$name\n")
-                        }
+                    for (dataItem in responseBody.data ?: emptyList()) {
+                        myStrBuilder.append("ID: ${dataItem?.id}\n")
+                        myStrBuilder.append("Name: ${dataItem?.name}\n")
+                        myStrBuilder.append("Picture: ${dataItem?.picture}\n")
+                        myStrBuilder.append("Picture Small: ${dataItem?.pictureSmall}\n")
+                        myStrBuilder.append("Picture Medium: ${dataItem?.pictureMedium}\n")
+                        myStrBuilder.append("Picture Big: ${dataItem?.pictureBig}\n")
+                        myStrBuilder.append("Picture XL: ${dataItem?.pictureXl}\n")
+                        myStrBuilder.append("Type: ${dataItem?.type}\n")
+                        myStrBuilder.append("\n")
                     }
-                    _data.value = myStrBuilder.toString()
+
+                    _data.value = responseBody.data
                 } else {
                     Log.d("FAILED", "Response body is null")
-                    _data.value = "FAILED"
+                    _data.value = null
                 }
             }
 
-            override fun onFailure(call: Call<Genre>?, t: Throwable) {
+            override fun onFailure(call: Call<Genre>, t: Throwable) {
                 Log.d("FAILED", t.message.toString())
 
-                _data.value = "FAILED"
+                _data.value = null
             }
         })
+
 
 
     }

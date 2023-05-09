@@ -35,7 +35,7 @@ class HomeFragment : Fragment() {
 
         val textView2 : TextView = binding.textData
         homeViewModel.data.observe(viewLifecycleOwner){
-            textView2.text = it
+            textView2.text = it?.get(0)?.name + it?.get(1)?.name
         }
 
         homeViewModel.getMyData()
