@@ -21,14 +21,15 @@ class HomeViewModel : ViewModel() {
         value = "This is home Fragment"
     }
 
-    private val _data = MutableLiveData<List<DataItem?>?>().apply {
+    private val _data = MutableLiveData<List<DataItem>?>().apply {
         value = null
     }
 
     val text: LiveData<String> = _text
-    var data: LiveData<List<DataItem?>?> = _data
+    var data: LiveData<List<DataItem>?> = _data
 
     ///////////////////////////////////////////////////////////////////////
+
 
 
 
@@ -49,8 +50,9 @@ class HomeViewModel : ViewModel() {
         val retrofitData = apiService.getGenres()
 
         retrofitData?.enqueue(object : Callback<Genre> {
+
             override fun onResponse(call: Call<Genre>, response: Response<Genre>) {
-                val responseBody = response?.body()
+                val responseBody = response.body()
                 if (responseBody != null) {
                     Log.d("SUCCESS", responseBody.toString())
                     val myStrBuilder = StringBuilder()
@@ -67,7 +69,8 @@ class HomeViewModel : ViewModel() {
                         myStrBuilder.append("\n")
                     }
 
-                    _data.value = responseBody.data
+                    _data.value = responseBody.data as List<DataItem>?
+                    Log.d("DEBUG:", "Size is: ${_data.value?.size}")
                 } else {
                     Log.d("FAILED", "Response body is null")
                     _data.value = null

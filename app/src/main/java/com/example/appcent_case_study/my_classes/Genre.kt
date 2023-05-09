@@ -1,5 +1,6 @@
 package com.example.appcent_case_study.my_classes
 
+import android.widget.ImageView
 import com.google.gson.annotations.SerializedName
 
 data class Genre(
