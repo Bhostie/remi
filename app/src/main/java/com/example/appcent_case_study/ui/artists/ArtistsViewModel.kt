@@ -31,7 +31,7 @@ class ArtistsViewModel : ViewModel() {
 
         //Building Retrofit
         val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(": https://api.deezer.com/genre/{genreId}/")
+            .baseUrl("https://api.deezer.com/genre/${genreId}/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 

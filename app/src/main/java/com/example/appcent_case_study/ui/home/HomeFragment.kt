@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.appcent_case_study.R
 import com.example.appcent_case_study.databinding.FragmentHomeBinding
 
@@ -19,6 +20,7 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    lateinit var recyclerView: RecyclerView
 
     private val homeViewModel by lazy {
         ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -37,13 +39,21 @@ class HomeFragment : Fragment() {
 
 
         val navBarHeight = getNavigationBarHeight(requireContext())
-        val recyclerView = binding.recyclerView
+        recyclerView = binding.recyclerView
         recyclerView.setPadding(0, 0, 0, navBarHeight)
         recyclerView.layoutManager = GridLayoutManager(requireContext(),2)
         recyclerView.adapter = homeViewModel.data.value?.let { GenreRecyclerViewAdapter(it) }
 
 
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        homeViewModel.data.observe(viewLifecycleOwner) { data ->
+            recyclerView.adapter = data?.let { GenreRecyclerViewAdapter(it) }
+        }
     }
 
     override fun onDestroyView() {

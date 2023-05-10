@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appcent_case_study.MainActivity
 import com.example.appcent_case_study.R
+import com.example.appcent_case_study.ui.artists.ArtistList
 import com.example.appcent_case_study.my_classes.Genre
-import com.example.appcent_case_study.ui.artists.ArtistsFragment
 import com.squareup.picasso.Picasso
 
 class GenreRecyclerViewAdapter(private val data: List<Genre>) : RecyclerView.Adapter<GenreRecyclerViewAdapter.GenreViewHolder>() {
@@ -49,9 +48,8 @@ class GenreRecyclerViewAdapter(private val data: List<Genre>) : RecyclerView.Ada
             println("YOU CLICKED: ${data[position].name}")  //Debug
             //TODO: Navigate Artists screen
 
-            val intent = Intent(holder.itemView.context, MainActivity::class.java)
-            intent.putExtra("fragment", "com.example.appcent_case_study.ui.artists.ArtistsFragment")
-            intent.putExtra("artistID", data[position].id)
+            val intent = Intent(holder.itemView.context, ArtistList::class.java)
+            intent.putExtra("genreId", data[position].id)
             holder.itemView.context.startActivity(intent)
 
 

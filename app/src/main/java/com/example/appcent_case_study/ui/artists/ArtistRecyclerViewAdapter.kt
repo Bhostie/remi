@@ -12,7 +12,11 @@ import com.example.appcent_case_study.my_classes.Artist
 import com.example.appcent_case_study.my_classes.Genre
 import com.squareup.picasso.Picasso
 
-class ArtistRecyclerViewAdapter(private val data: List<Artist>) : RecyclerView.Adapter<ArtistRecyclerViewAdapter.GenreViewHolder>() {
+class ArtistRecyclerViewAdapter(private var data: List<Artist>) : RecyclerView.Adapter<ArtistRecyclerViewAdapter.GenreViewHolder>() {
+
+    fun updateData(input: List<Artist>){
+        data = input
+    }
 
 
     class GenreViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener{
