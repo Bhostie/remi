@@ -7,10 +7,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appcent_case_study.R
-import com.example.appcent_case_study.my_classes.DataItem
+import com.example.appcent_case_study.my_classes.Genre
 import com.squareup.picasso.Picasso
 
-class GenreRecyclerViewAdapter(private val data: List<DataItem>) : RecyclerView.Adapter<GenreRecyclerViewAdapter.GenreViewHolder>() {
+class GenreRecyclerViewAdapter(private val data: List<Genre>) : RecyclerView.Adapter<GenreRecyclerViewAdapter.GenreViewHolder>() {
 
 
     class GenreViewHolder(itemView: View): RecyclerView.ViewHolder(itemView),View.OnClickListener{

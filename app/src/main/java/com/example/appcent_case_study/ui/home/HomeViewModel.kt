@@ -4,11 +4,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.appcent_case_study.my_classes.ApiService
-import com.example.appcent_case_study.my_classes.DataItem
 import com.example.appcent_case_study.my_classes.Genre
-import kotlinx.coroutines.launch
+import com.example.appcent_case_study.my_classes.GenreList
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,12 +19,12 @@ class HomeViewModel : ViewModel() {
         value = "This is home Fragment"
     }
 
-    private val _data = MutableLiveData<List<DataItem>?>().apply {
+    private val _data = MutableLiveData<List<Genre>?>().apply {
         value = null
     }
 
     val text: LiveData<String> = _text
-    var data: LiveData<List<DataItem>?> = _data
+    var data: LiveData<List<Genre>?> = _data
 
     ///////////////////////////////////////////////////////////////////////
 
@@ -34,8 +32,8 @@ class HomeViewModel : ViewModel() {
 
 
 
-    private val _genres = MutableLiveData<Genre>()
-    val genres: LiveData<Genre> get() = _genres
+    private val _genres = MutableLiveData<GenreList>()
+    val genres: LiveData<GenreList> get() = _genres
 
 
     fun getMyData(){
@@ -49,9 +47,9 @@ class HomeViewModel : ViewModel() {
 
         val retrofitData = apiService.getGenres()
 
-        retrofitData?.enqueue(object : Callback<Genre> {
+        retrofitData?.enqueue(object : Callback<GenreList> {
 
-            override fun onResponse(call: Call<Genre>, response: Response<Genre>) {
+            override fun onResponse(call: Call<GenreList>, response: Response<GenreList>) {
                 val responseBody = response.body()
                 if (responseBody != null) {
                     Log.d("SUCCESS", responseBody.toString())
@@ -69,7 +67,7 @@ class HomeViewModel : ViewModel() {
                         myStrBuilder.append("\n")
                     }
 
-                    _data.value = responseBody.data as List<DataItem>?
+                    _data.value = responseBody.data as List<Genre>?
                     Log.d("DEBUG:", "Size is: ${_data.value?.size}")
                 } else {
                     Log.d("FAILED", "Response body is null")
@@ -77,7 +75,7 @@ class HomeViewModel : ViewModel() {
                 }
             }
 
-            override fun onFailure(call: Call<Genre>, t: Throwable) {
+            override fun onFailure(call: Call<GenreList>, t: Throwable) {
                 Log.d("FAILED", t.message.toString())
 
                 _data.value = null

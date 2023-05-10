@@ -5,6 +5,6 @@ import retrofit2.Call
 
 interface ApiService {
     @GET("genre/")
-    fun getGenres(): Call<Genre>?
+    fun getGenres(): Call<GenreList>?
 
 }
