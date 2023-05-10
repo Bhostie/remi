@@ -3,6 +3,7 @@ package com.example.appcent_case_study
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -31,5 +32,18 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Check if the intent contains artistId
+        if (intent.hasExtra("artistId")) {
+            // Get the artistId from the intent
+            val artistId = intent.getStringExtra("artistId")
+
+            // Navigate to the ArtistsFragment and pass the artistId as an argument
+            val bundle = bundleOf("artistId" to artistId)
+            findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_artists, bundle)
+        }
+
+
+
     }
 }

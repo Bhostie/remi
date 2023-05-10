@@ -1,4 +1,4 @@
-package com.example.appcent_case_study.ui.home
+package com.example.appcent_case_study.ui.artists
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -7,16 +7,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appcent_case_study.MainActivity
 import com.example.appcent_case_study.R
+import com.example.appcent_case_study.my_classes.Artist
 import com.example.appcent_case_study.my_classes.Genre
-import com.example.appcent_case_study.ui.artists.ArtistsFragment
 import com.squareup.picasso.Picasso
 
-class GenreRecyclerViewAdapter(private val data: List<Genre>) : RecyclerView.Adapter<GenreRecyclerViewAdapter.GenreViewHolder>() {
+class ArtistRecyclerViewAdapter(private val data: List<Artist>) : RecyclerView.Adapter<ArtistRecyclerViewAdapter.GenreViewHolder>() {
 
 
-    class GenreViewHolder(itemView: View): RecyclerView.ViewHolder(itemView),View.OnClickListener{
+    class GenreViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener{
         var image: ImageView = itemView.findViewById(R.id.image_view)
         var title: TextView = itemView.findViewById(R.id.title_text_view)
 
@@ -47,14 +46,6 @@ class GenreRecyclerViewAdapter(private val data: List<Genre>) : RecyclerView.Ada
         // Navigate to the Artists screen when clicked
         holder.itemView.setOnClickListener{
             println("YOU CLICKED: ${data[position].name}")  //Debug
-            //TODO: Navigate Artists screen
-
-            val intent = Intent(holder.itemView.context, MainActivity::class.java)
-            intent.putExtra("fragment", "com.example.appcent_case_study.ui.artists.ArtistsFragment")
-            intent.putExtra("artistID", data[position].id)
-            holder.itemView.context.startActivity(intent)
-
-
 
         }
     }
