@@ -9,7 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appcent_case_study.R
 import com.example.appcent_case_study.my_classes.Artist
-import com.example.appcent_case_study.my_classes.Genre
+import com.example.appcent_case_study.my_classes.ArtistItem
+import com.example.appcent_case_study.ui.artist_details.ArtistDetails
 import com.squareup.picasso.Picasso
 
 class ArtistRecyclerViewAdapter(private var data: List<Artist>) : RecyclerView.Adapter<ArtistRecyclerViewAdapter.GenreViewHolder>() {
@@ -34,14 +35,14 @@ class ArtistRecyclerViewAdapter(private var data: List<Artist>) : RecyclerView.A
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_genre_item, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_genre_piece, parent, false)
         return GenreViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
 
         // Converting our image string into ImageView with Picasso
-        val imageUrl = data[position].picture!!
+        val imageUrl = data[position].pictureMedium!!
         Picasso.get().load(imageUrl).into(holder.image)
 
         // View the Genre name
@@ -50,6 +51,11 @@ class ArtistRecyclerViewAdapter(private var data: List<Artist>) : RecyclerView.A
         // Navigate to the Artists screen when clicked
         holder.itemView.setOnClickListener{
             println("YOU CLICKED: ${data[position].name}")  //Debug
+
+            val intent = Intent(holder.itemView.context, ArtistDetails::class.java)
+            intent.putExtra("artistId", data[position].id)
+            intent.putExtra("artistName",data[position].name)
+            holder.itemView.context.startActivity(intent)
 
         }
     }

@@ -11,4 +11,11 @@ interface ApiService {
     @GET("artists/")
     fun getArtists(): Call<ArtistList>?
 
+    @GET("{artistId}/")
+    fun getArtistDetails(@Path("artistId") artistId: String): Call<ArtistItem>?
+
+    @GET("albums/")
+    fun getArtistAlbums(): Call<AlbumList>
+
+
 }

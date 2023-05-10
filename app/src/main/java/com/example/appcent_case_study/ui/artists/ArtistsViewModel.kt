@@ -26,7 +26,6 @@ class ArtistsViewModel : ViewModel() {
         genreId = data
     }
 
-
     fun getMyData(){
 
         //Building Retrofit
@@ -56,22 +55,13 @@ class ArtistsViewModel : ViewModel() {
                     Log.d(ContentValues.TAG, "Response body is null")
                     _data.value = null
                 }
-
-
-
             }
-
             override fun onFailure(call: Call<ArtistList>, t: Throwable) {
                 Log.d("FAILED", t.message.toString())
                 _data.value = null
             }
 
-
-
         })
-
-
-
 
 
     }

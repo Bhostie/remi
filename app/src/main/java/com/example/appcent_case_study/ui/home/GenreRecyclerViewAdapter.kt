@@ -30,14 +30,14 @@ class GenreRecyclerViewAdapter(private val data: List<Genre>) : RecyclerView.Ada
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_genre_item, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_genre_piece, parent, false)
         return GenreViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
 
         // Converting our image string into ImageView with Picasso
-        val imageUrl = data[position].picture!!
+        val imageUrl = data[position].pictureMedium!!
         Picasso.get().load(imageUrl).into(holder.image)
 
         // View the Genre name
@@ -46,7 +46,6 @@ class GenreRecyclerViewAdapter(private val data: List<Genre>) : RecyclerView.Ada
         // Navigate to the Artists screen when clicked
         holder.itemView.setOnClickListener{
             println("YOU CLICKED: ${data[position].name}")  //Debug
-            //TODO: Navigate Artists screen
 
             val intent = Intent(holder.itemView.context, ArtistList::class.java)
             intent.putExtra("genreId", data[position].id)

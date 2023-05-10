@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-
-
     tools:context=".MainActivity">
 
 
@@ -17,5 +15,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/recycler_view_genre_piece" />
+        tools:listitem="@layout/recycler_view_artistitem_piece" />
 </androidx.constraintlayout.widget.ConstraintLayout>
