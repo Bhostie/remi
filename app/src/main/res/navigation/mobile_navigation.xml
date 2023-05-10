@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.appcent_case_study.ui.home.HomeFragment"
-        android:label="@string/title_home"
+        android:label="@string/title_genres"
         tools:layout="@layout/fragment_home" />
 
     <fragment

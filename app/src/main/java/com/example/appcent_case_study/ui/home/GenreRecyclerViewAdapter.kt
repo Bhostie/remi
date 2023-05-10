@@ -34,20 +34,20 @@ class GenreRecyclerViewAdapter(private val data: List<DataItem>) : RecyclerView.
 
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
 
+        // Converting our image string into ImageView with Picasso
         val imageUrl = data[position].picture!!
         Picasso.get().load(imageUrl).into(holder.image)
 
+        // View the Genre name
         holder.title.text = data[position].name
 
+        // Navigate to the Artists screen when clicked
         holder.itemView.setOnClickListener{
             println("YOU CLICKED: ${data[position].name}")
+            //TODO: Navigate Artists screen
         }
-
-
     }
 
     override fun getItemCount() = data.size
-
-
 
 }
