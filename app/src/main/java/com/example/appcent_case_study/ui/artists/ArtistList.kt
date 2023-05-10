@@ -23,6 +23,8 @@ class ArtistList : AppCompatActivity() {
         _binding = ActivityArtistListBinding.inflate(layoutInflater)
 
         val genreId = intent.getStringExtra("genreId").toString()
+        val genreName = intent.getStringExtra("genreName").toString()
+        title = genreName
 
         artistsViewModel.getIntentData(genreId)
         artistsViewModel.getMyData()

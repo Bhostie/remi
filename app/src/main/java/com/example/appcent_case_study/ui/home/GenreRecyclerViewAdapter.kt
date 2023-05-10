@@ -50,6 +50,7 @@ class GenreRecyclerViewAdapter(private val data: List<Genre>) : RecyclerView.Ada
 
             val intent = Intent(holder.itemView.context, ArtistList::class.java)
             intent.putExtra("genreId", data[position].id)
+            intent.putExtra("genreName", data[position].name)
             holder.itemView.context.startActivity(intent)
 
 
