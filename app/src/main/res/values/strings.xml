@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Appcent_case_study</string>
     <string name="title_home">Home</string>
+    <string name="title_genres">Genres</string>
     <string name="title_likes">Liked Songs</string>
     <string name="title_notifications">Notifications</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.example.appcent_case_study.ui.home
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appcent_case_study.R
 import com.example.appcent_case_study.databinding.FragmentHomeBinding
 
@@ -20,6 +24,7 @@ class HomeFragment : Fragment() {
         ViewModelProvider(this).get(HomeViewModel::class.java)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,17 +33,15 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-
-        val textView2 : TextView = binding.textData
-        homeViewModel.data.observe(viewLifecycleOwner){
-            textView2.text = it?.get(0)?.name + it?.get(1)?.name
-        }
-
         homeViewModel.getMyData()
+
+
+        val navBarHeight = getNavigationBarHeight(requireContext())
+        val recyclerView = binding.recyclerView
+        recyclerView.setPadding(0, 0, 0, navBarHeight)
+        recyclerView.layoutManager = GridLayoutManager(requireContext(),2)
+        recyclerView.adapter = homeViewModel.data.value?.let { GenreRecyclerViewAdapter(it) }
+
 
         return root
     }
@@ -46,5 +49,13 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    @SuppressLint("InternalInsetResource", "DiscouragedApi")
+    fun getNavigationBarHeight(context: Context): Int {
+        val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (resourceId > 0) {
+            context.resources.getDimensionPixelSize(resourceId)
+        } else 0
     }
 }

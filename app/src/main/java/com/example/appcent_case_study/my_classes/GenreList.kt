@@ -2,13 +2,13 @@ package com.example.appcent_case_study.my_classes
 
 import com.google.gson.annotations.SerializedName
 
-data class Genre(
+data class GenreList(
 
     @field:SerializedName("data")
-    val data: List<DataItem?>? = null
+    val data: List<Genre?>? = null
 )
 
-data class DataItem(
+data class Genre(
 
     @field:SerializedName("picture_xl")
     val pictureXl: String? = null,
