@@ -17,5 +17,8 @@ interface ApiService {
     @GET("albums/")
     fun getArtistAlbums(): Call<AlbumList>
 
+    @GET("tracks/")
+    fun getTracks(): Call<TrackList>
+
 
 }
