@@ -15,6 +15,13 @@
         android:theme="@style/Theme.Appcent_case_study"
         tools:targetApi="31">
         <activity
+            android:name=".ui.album_details.AlbumDetails"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ui.artist_details.ArtistDetails"
             android:exported="false">
             <meta-data
