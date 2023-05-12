@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appcent_case_study.R
 import com.example.appcent_case_study.my_classes.Album
 import com.example.appcent_case_study.my_classes.ArtistItem
+import com.example.appcent_case_study.ui.album_details.AlbumDetails
 import com.squareup.picasso.Picasso
 
 class ArtistDetailsRecyclerViewAdapter(private var albumdata: List<Album>) : RecyclerView.Adapter<ArtistDetailsRecyclerViewAdapter.AlbumViewHolder>() {
@@ -57,10 +58,11 @@ class ArtistDetailsRecyclerViewAdapter(private var albumdata: List<Album>) : Rec
         holder.itemView.setOnClickListener{
             println("YOU CLICKED: ${albumdata[position].title}")  //Debug
 
-            val intent = Intent(holder.itemView.context, ArtistItem::class.java)
+            val intent = Intent(holder.itemView.context, AlbumDetails::class.java)
             intent.putExtra("albumId", albumdata[position].id)
             intent.putExtra("albumName",albumdata[position].title)
-            //holder.itemView.context.startActivity(intent)
+            intent.putExtra("albumCover",albumdata[position].coverMedium)
+            holder.itemView.context.startActivity(intent)
 
         }
     }
