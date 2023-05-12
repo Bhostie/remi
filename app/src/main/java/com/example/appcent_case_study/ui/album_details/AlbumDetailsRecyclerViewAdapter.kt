@@ -43,7 +43,7 @@ class AlbumDetailsRecyclerViewAdapter(private var data: List<Track>, var imgUrl:
 
         holder.track_title.text = data[position].title
 
-        holder.duration.text = data[position].duration
+        holder.duration.text = data[position].duration?.let { formatTime(it.toInt()) }
 
         holder.icon.setOnClickListener{
             println("YOU CLICKED HEART OF: ${data[position].title}")
@@ -56,6 +56,13 @@ class AlbumDetailsRecyclerViewAdapter(private var data: List<Track>, var imgUrl:
     }
 
     override fun getItemCount() = data.size
+
+
+    fun formatTime(totalSeconds: Int): String {
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        return String.format("%d:%02d\"", minutes, seconds)
+    }
 
 
 

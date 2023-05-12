@@ -39,7 +39,7 @@ class ArtistDetails : AppCompatActivity() {
         // Observe the data in the ViewModel and set it to the adapter when it changes
         artistDetailsViewModel.data.observe(this) { ArtistItem ->
             ArtistItem?.let {
-                val imgUrl = ArtistItem.pictureMedium
+                val imgUrl = ArtistItem.pictureBig
                 Picasso.get().load(imgUrl).into(binding.imageView)
             }
         }
