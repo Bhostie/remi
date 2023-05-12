@@ -6,4 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".ui.album_details.AlbumDetails">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/recycler_view_track_piece"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
