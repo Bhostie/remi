@@ -1,20 +1,28 @@
 package com.example.appcent_case_study.ui.album_details
 
+import android.app.Activity
+import android.content.Context.MODE_PRIVATE
 import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appcent_case_study.R
+import com.example.appcent_case_study.my_classes.Album
+import com.example.appcent_case_study.my_classes.SavedTrack
 import com.example.appcent_case_study.my_classes.Track
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
 
-class AlbumDetailsRecyclerViewAdapter(private var data: List<Track>, private var imgUrl: String) : RecyclerView.Adapter<AlbumDetailsRecyclerViewAdapter.TrackViewHolder>() {
+class AlbumDetailsRecyclerViewAdapter(private var data: List<Track>, private var imgUrl: String, private val activity: AlbumDetails) : RecyclerView.Adapter<AlbumDetailsRecyclerViewAdapter.TrackViewHolder>() {
 
     // Initialize media player class for playing music
     private val mediaPlayer = MediaPlayer()
+
 
     class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener{
 
@@ -39,19 +47,38 @@ class AlbumDetailsRecyclerViewAdapter(private var data: List<Track>, private var
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        // Loading image views
+        // Loading image view
         val imageUrl = imgUrl
         Picasso.get().load(imageUrl).into(holder.image)
-        holder.icon.setImageResource(R.drawable.ic_baseline_favorite_border_24)
-
 
         holder.trackTitle.text = data[position].title
-
         holder.duration.text = data[position].duration?.let { formatTime(it.toInt()) }
 
+        if (activity.isLiked(data[position].id.toString())){
+            holder.icon.setImageResource(R.drawable.ic_baseline_favorite_24)
+        }
+        else{
+            holder.icon.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+        }
+
+
+        // Listener of like button
         holder.icon.setOnClickListener{
             println("YOU CLICKED HEART OF: ${data[position].title}")
+
+            // If song already liked, remove like
+            if(activity.isLiked(data[position].id.toString())){
+                activity.deleteLikedSong(data[position].id.toString())
+            }
+            // If its not liked, add it to liked list
+            else{
+                val saved = SavedTrack( data[position].id, data[position].title, data[position].duration, data[position].preview, imgUrl)
+                activity.saveLikedSong(saved)
+            }
+            notifyDataSetChanged()
         }
+
+        // Listener of entire song cell
         holder.itemView.setOnClickListener{
             println("YOU CLICKED: ${data[position].title}")
 
