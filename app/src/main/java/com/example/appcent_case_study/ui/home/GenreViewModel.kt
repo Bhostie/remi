@@ -13,7 +13,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class HomeViewModel : ViewModel() {
+class GenreViewModel : ViewModel() {
 
 
     private val _data = MutableLiveData<List<Genre>?>().apply {
