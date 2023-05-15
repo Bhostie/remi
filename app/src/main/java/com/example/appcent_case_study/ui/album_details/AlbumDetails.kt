@@ -39,16 +39,6 @@ class AlbumDetails : AppCompatActivity() {
         editor.apply()
         Toast.makeText(this, "You Unliked the song", Toast.LENGTH_SHORT).show()
     }
-    fun getLikedSong(id: String): SavedTrack {
-
-        // Retrieve JSON string from shared preferences
-        val prefs = getSharedPreferences("LocalData", MODE_PRIVATE)
-        val songJson = prefs.getString("song_${id}", null)
-
-        // Convert JSON string to data class
-        val gson = Gson()
-        return gson.fromJson(songJson, SavedTrack::class.java)
-    }
 
     fun isLiked(id: String): Boolean{
         // Retrieve JSON string from shared preferences

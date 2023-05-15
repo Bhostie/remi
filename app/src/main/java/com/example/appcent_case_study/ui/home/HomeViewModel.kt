@@ -15,21 +15,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class HomeViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
 
     private val _data = MutableLiveData<List<Genre>?>().apply {
         value = null
     }
 
-    val text: LiveData<String> = _text
     var data: LiveData<List<Genre>?> = _data
 
     ///////////////////////////////////////////////////////////////////////
-
-
-
 
 
     private val _genres = MutableLiveData<GenreList>()
