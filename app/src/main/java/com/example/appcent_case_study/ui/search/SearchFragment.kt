@@ -1,5 +1,6 @@
 package com.example.appcent_case_study.ui.search
 
+import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -74,6 +75,7 @@ class SearchFragment : Fragment() {
         }
 
         recyclerView = binding.recyclerView
+        recyclerView.setPadding(0, 0, 0, getNavigationBarHeight(requireContext()))
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = searchViewModel.data.value?.let { SearchRecyclerViewAdapter(it, this) }
 
@@ -97,6 +99,13 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun getNavigationBarHeight(context: Context): Int {
+        val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (resourceId > 0) {
+            context.resources.getDimensionPixelSize(resourceId)
+        } else 0
     }
 
 }
