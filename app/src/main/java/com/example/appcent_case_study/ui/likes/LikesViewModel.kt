@@ -30,8 +30,8 @@ class LikesViewModel : ViewModel() {
                 val trackJson = value as String
                 val track = gson.fromJson(trackJson, SavedTrack::class.java)
                 trackList.add(track)
-                // do something with the track object
             }
+
         }
         _data.value = trackList
     }
