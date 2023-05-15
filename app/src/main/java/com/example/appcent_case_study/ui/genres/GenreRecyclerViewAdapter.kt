@@ -1,4 +1,4 @@
-package com.example.appcent_case_study.ui.home
+package com.example.appcent_case_study.ui.genres
 
 import android.content.Intent
 import android.view.LayoutInflater

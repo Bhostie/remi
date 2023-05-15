@@ -9,14 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appcent_case_study.R
-import com.example.appcent_case_study.databinding.FragmentHomeBinding
 import com.example.appcent_case_study.databinding.FragmentSearchBinding
 import com.example.appcent_case_study.my_classes.SavedTrack
-import com.example.appcent_case_study.ui.home.GenreRecyclerViewAdapter
 import com.google.gson.Gson
 
 class SearchFragment : Fragment() {
@@ -40,6 +37,7 @@ class SearchFragment : Fragment() {
 
     }
 
+    // This function deletes the local record of the song with given id
     fun deleteLikedSong(id: String){
         val sharedPreferences = requireContext().getSharedPreferences("LocalData", AppCompatActivity.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -65,8 +63,7 @@ class SearchFragment : Fragment() {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
-        var tempKeyword = "eminem"
+        lateinit var tempKeyword: String
 
         binding.searchButton.setOnClickListener{
 
@@ -74,23 +71,19 @@ class SearchFragment : Fragment() {
             searchViewModel.getSearchData(tempKeyword)
         }
 
+        // Setting recyclerView
         recyclerView = binding.recyclerView
+        // Setting padding to recyclerView to prevent clash with navbar
         recyclerView.setPadding(0, 0, 0, getNavigationBarHeight(requireContext()))
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = searchViewModel.data.value?.let { SearchRecyclerViewAdapter(it, this) }
 
-
-
-
-
-
-
         return root
     }
 
+    // This wil observe the data and will get the update from adapter
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         searchViewModel.data.observe(viewLifecycleOwner) { data ->
             recyclerView.adapter = data?.let { SearchRecyclerViewAdapter(it, this) }
         }
@@ -101,6 +94,7 @@ class SearchFragment : Fragment() {
         _binding = null
     }
 
+    // Function for getting the navbar height dynamically
     fun getNavigationBarHeight(context: Context): Int {
         val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return if (resourceId > 0) {

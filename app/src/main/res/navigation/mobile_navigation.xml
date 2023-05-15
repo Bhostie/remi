@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.appcent_case_study.ui.home.GenreFragment"
+        android:name="com.example.appcent_case_study.ui.genres.GenreFragment"
         android:label="@string/title_genres"
         tools:layout="@layout/fragment_home" />
 
