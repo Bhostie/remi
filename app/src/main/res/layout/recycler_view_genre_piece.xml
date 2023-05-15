@@ -9,33 +9,33 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="170dp"
+        android:layout_height="170dp">
 
         <ImageView
             android:id="@+id/image_view"
-            android:layout_width="170dp"
-            android:layout_height="170dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/title_text_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            android:gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:padding="4dp"
             android:shadowColor="@color/black"
-            android:shadowDx="4"
-            android:shadowDy="4"
-            android:shadowRadius="6"
+            android:shadowDx="5"
+            android:shadowDy="5"
+            android:shadowRadius="7"
             android:text="Genre"
-            android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-    </FrameLayout>
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
