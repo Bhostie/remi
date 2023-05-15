@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.appcent_case_study.ui.home.HomeFragment"
+        android:name="com.example.appcent_case_study.ui.home.GenreFragment"
         android:label="@string/title_genres"
         tools:layout="@layout/fragment_home" />
 
@@ -16,4 +16,10 @@
         android:name="com.example.appcent_case_study.ui.likes.LikesFragment"
         android:label="@string/title_likes"
         tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.example.appcent_case_study.ui.search.SearchFragment"
+        android:label="@string/title_search"
+        tools:layout="@layout/fragment_search" />
 </navigation>

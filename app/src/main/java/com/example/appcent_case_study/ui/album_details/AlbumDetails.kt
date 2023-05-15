@@ -44,7 +44,6 @@ class AlbumDetails : AppCompatActivity() {
         // Retrieve JSON string from shared preferences
         val prefs = getSharedPreferences("LocalData", MODE_PRIVATE)
         val songJson = prefs.getString("song_${id}", null)
-
         return songJson!=null
 
     }

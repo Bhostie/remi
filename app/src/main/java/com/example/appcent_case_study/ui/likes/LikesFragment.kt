@@ -51,7 +51,10 @@ class LikesFragment : Fragment() {
         likesViewModel.getSharedPrefs(sharedPreferences)
         likesViewModel.getSavedData()
 
+
+
         recyclerView = binding.recyclerView
+        recyclerView.setPadding(0, 0, 0, getNavigationBarHeight(requireContext()))
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = likesViewModel.data.value?.let { LikesRecyclerViewAdapter(it, this) }
 
@@ -70,4 +73,12 @@ class LikesFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    fun getNavigationBarHeight(context: Context): Int {
+        val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (resourceId > 0) {
+            context.resources.getDimensionPixelSize(resourceId)
+        } else 0
+    }
 }
+
