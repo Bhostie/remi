@@ -8,8 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appcent_case_study.R
-import com.example.appcent_case_study.ui.artists.ArtistList
 import com.example.appcent_case_study.my_classes.Genre
+import com.example.appcent_case_study.ui.artists.ArtistList
 import com.squareup.picasso.Picasso
 
 class GenreRecyclerViewAdapter(private val data: List<Genre>) : RecyclerView.Adapter<GenreRecyclerViewAdapter.GenreViewHolder>() {
