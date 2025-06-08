@@ -1,6 +1,7 @@
 package com.example.appcent_case_study.ui.artist_details
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ class ArtistDetailsRecyclerViewAdapter(private var albumdata: List<Album>) : Rec
 
         override fun onClick(v: View?) {
             println("YOU CLICKED THIS: \n")
+            Log.d("BALLS"," you screw up")
         }
 
     }

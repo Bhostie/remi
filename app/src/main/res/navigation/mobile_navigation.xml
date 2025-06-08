@@ -22,4 +22,12 @@
         android:name="com.example.appcent_case_study.ui.search.SearchFragment"
         android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/navigation_recipes"
+        android:name="com.example.appcent_case_study.ui.recipes.RecipeFragment"
+        android:label="@string/title_recipes"
+        tools:layout="@layout/fragment_recipes" />
+
+
 </navigation>
