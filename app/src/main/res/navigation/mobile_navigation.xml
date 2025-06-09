@@ -37,11 +37,7 @@
         android:id="@+id/navigation_recipe_detail"
         android:name="com.example.appcent_case_study.ui.recipe_details.RecipeDetailFragment"
         android:label="@string/title_recipe_detail"
-        tools:layout="@layout/fragment_recipe_details" >
-
-        <argument
-            android:name="recipeId"
-            app:argType="long" />
+        tools:layout="@layout/fragment_recipe_details">
     </fragment>
 
 </navigation>

@@ -62,19 +62,15 @@ class RecipeFragment : Fragment() {
         // **NAVIGATION**: when an item is clicked, navigate with the recipeId
         adapter.onItemClick = { recipe ->
             Log.d("RecipeFragment", "Clicked on recipe: ${recipe.name}")
-            val bundle = bundleOf("recipeId" to recipe.id)
-            navController.navigate(
-                R.id.action_navigation_recipes_to_navigation_recipe_detail,
-                bundle
-            )
+            val bundle = Bundle().apply {
+                putLong("recipeId", recipe.id)
+            }
+            findNavController().navigate(R.id.navigation_recipe_detail, bundle)
         }
 
 
         // 4) Observe the LiveData from Room and submit into adapter
         recipeViewModel.allRecipes.observe(viewLifecycleOwner) { recipes ->
-            // If you used ListAdapter:
-            //    adapter.submitList(recipes)
-            // Or, if you wrote a plain adapter with setData():
             adapter.setData(recipes)
         }
     }

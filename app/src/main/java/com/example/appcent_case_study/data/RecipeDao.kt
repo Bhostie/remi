@@ -41,7 +41,7 @@ interface RecipeDao {
      * Fetch a single recipe by ID.
      */
     @Query("SELECT * FROM recipes WHERE id = :recipeId LIMIT 1")
-    suspend fun getRecipeById(recipeId: Long): Recipe?
+    fun getRecipeById(recipeId: Long): Flow<Recipe>
 
     /**
      * Load a Recipe and its Steps in one go.

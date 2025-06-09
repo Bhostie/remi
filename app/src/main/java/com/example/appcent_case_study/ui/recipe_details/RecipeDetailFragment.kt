@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.appcent_case_study.R
 import com.example.appcent_case_study.data.AppDatabase
 import com.example.appcent_case_study.data.Ingredient
 import com.example.appcent_case_study.data.LocalRecipeRepository
@@ -18,49 +21,67 @@ import com.example.appcent_case_study.databinding.FragmentRecipeDetailsBinding
 import com.example.appcent_case_study.ui.genres.RecipeViewModel
 import com.example.appcent_case_study.ui.recipes.RecipeViewModelFactory
 
-class RecipeDetailFragment : Fragment() {
+class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_details) {
 
     private var _binding: FragmentRecipeDetailsBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: IngredientAdapter
 
+    // 1) We need a factory to pass our LocalRecipeRepository into the VM
+    private val recipeDetailViewModel by lazy {
+        val db = AppDatabase.getInstance(requireContext())
+        val repo = LocalRecipeRepository(db)
+        val factory = DetailViewModelFactory(repo, requireArguments().getLong("recipeId"))
+        ViewModelProvider(this, factory)[DetailViewModel::class.java]
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         _binding = FragmentRecipeDetailsBinding.bind(view)
 
-        // Read the ID
-        val recipeId = requireArguments().getLong("recipeId")
+        recipeDetailViewModel.recipeById.observe(viewLifecycleOwner) { recipe ->
+
+            // Bind the name
+            binding.recipeName.text = recipe.name
+
+            // Build image uri
+            val assetUri = recipe.imageUri
+                ?.takeIf { it.isNotBlank() }
+                ?.let { "file:///android_asset/images/$it" }
+                ?: R.drawable.ic_dashboard_black_24dp // Fallback image
+
+            // Bind the image
+            Glide.with(binding.imageView.context)
+                .load(assetUri)
+                .centerCrop()
+                .placeholder(R.drawable.ic_dashboard_black_24dp)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.imageView)
 
 
+            // 2) Parse the ingredients string:
+            val ingredientsList = recipe.ingredients
+                .split("\n")
+                .mapNotNull { line ->
+                    val parts = line.split(";")
+                    if (parts.size >= 2) {
+                        val name   = parts[0].trim()
+                        val amount = parts[1].trim()
+                        Ingredient(name, amount)
+                    } else null
+                }
 
-        // Suppose you passed in the Recipe via arguments:
-        val recipe: Recipe = requireArguments().getParcelable("recipe")!!
-
-        // 1) Show your recipe image & other fields...
-        //    (Glide or asset-loading code as before)
-        binding.recipeName.text = recipe.name
-        binding.imageView.setImageResource(
-            resources.getIdentifier(recipe.imageUri, "drawable", requireContext().packageName)
-        )
-
-        // 2) Parse the ingredients string:
-        val ingredientsList = recipe.ingredients
-            .split("\n")
-            .mapNotNull { line ->
-                val parts = line.split(";")
-                if (parts.size >= 2) {
-                    val name   = parts[0].trim()
-                    val amount = parts[1].trim()
-                    Ingredient(name, amount)
-                } else null
+            // 3) Set up RecyclerView
+            adapter = IngredientAdapter(ingredientsList ?: emptyList())
+            binding.recyclerView.apply {
+                layoutManager = GridLayoutManager(requireContext(),2)
+                adapter = this@RecipeDetailFragment.adapter
             }
-
-        // 3) Set up RecyclerView
-        adapter = IngredientAdapter(ingredientsList)
-        binding.recyclerView.apply {
-            layoutManager = GridLayoutManager(requireContext(),2)
-            adapter = this@RecipeDetailFragment.adapter
         }
+
+
+
     }
 
     override fun onDestroyView() {

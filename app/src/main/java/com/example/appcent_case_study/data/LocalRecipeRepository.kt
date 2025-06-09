@@ -9,6 +9,9 @@ class LocalRecipeRepository(private val db: AppDatabase) {
     /** Return all recipes, Live–updating. */
     fun getAllRecipes(): Flow<List<Recipe>> = recipeDao.getAllRecipes()
 
+    fun getRecipeById(recipeId: Long): Flow<Recipe> =
+        recipeDao.getRecipeById(recipeId)
+
     /** Insert a new recipe and its steps (atomic). */
     suspend fun insertRecipeWithSteps(
         recipe: Recipe,
