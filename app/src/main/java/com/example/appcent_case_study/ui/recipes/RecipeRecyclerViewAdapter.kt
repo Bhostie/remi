@@ -58,6 +58,7 @@ class RecipeRecyclerViewAdapter(
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(recipe)
         }
+
     }
 
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -21,19 +21,19 @@ interface StepDao {
      * Update an existing step.
      */
     @Update
-    suspend fun updateStep(step: Step)
+    suspend fun updateStep(step: Step): Int
 
     /**
      * Delete a step by its id.
      */
     @Query("DELETE FROM steps WHERE id = :stepId")
-    suspend fun deleteStepById(stepId: Long)
+    suspend fun deleteStepById(stepId: Long): Int
 
     /**
      * Delete all steps belonging to a given recipe (useful if you want to overwrite).
      */
     @Query("DELETE FROM steps WHERE recipe_id = :recipeId")
-    suspend fun deleteStepsForRecipe(recipeId: Long)
+    suspend fun deleteStepsForRecipe(recipeId: Long): Int
 
     /**
      * Fetch all steps of a particular recipe — ordered by step_number ascending.

@@ -3,12 +3,16 @@ package com.example.appcent_case_study.ui.recipes
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.appcent_case_study.R
 import com.example.appcent_case_study.data.AppDatabase
 import com.example.appcent_case_study.data.LocalRecipeRepository
 import com.example.appcent_case_study.databinding.FragmentRecipesBinding
@@ -20,6 +24,7 @@ class RecipeFragment : Fragment() {
     private var _binding: FragmentRecipesBinding? = null
     private val binding get() = _binding!!
 
+    private val navController by lazy { findNavController() }
     private lateinit var adapter: RecipeRecyclerViewAdapter
 
     // 1) We need a factory to pass our LocalRecipeRepository into the VM
@@ -53,6 +58,17 @@ class RecipeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // **NAVIGATION**: when an item is clicked, navigate with the recipeId
+        adapter.onItemClick = { recipe ->
+            Log.d("RecipeFragment", "Clicked on recipe: ${recipe.name}")
+            val bundle = bundleOf("recipeId" to recipe.id)
+            navController.navigate(
+                R.id.action_navigation_recipes_to_navigation_recipe_detail,
+                bundle
+            )
+        }
+
 
         // 4) Observe the LiveData from Room and submit into adapter
         recipeViewModel.allRecipes.observe(viewLifecycleOwner) { recipes ->

@@ -23,13 +23,13 @@ interface RecipeDao {
      * Update an existing recipe (by primary key).
      */
     @Update
-    suspend fun updateRecipe(recipe: Recipe)
+    suspend fun updateRecipe(recipe: Recipe): Int
 
     /**
      * Delete a recipe (and, due to CASCADE, its associated Steps).
      */
     @Query("DELETE FROM recipes WHERE id = :recipeId")
-    suspend fun deleteRecipeById(recipeId: Long)
+    suspend fun deleteRecipeById(recipeId: Long): Int
 
     /**
      * Fetch all recipes, sorted by name.
