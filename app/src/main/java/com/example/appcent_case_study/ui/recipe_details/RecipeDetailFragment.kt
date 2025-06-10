@@ -3,9 +3,13 @@ package com.example.appcent_case_study.ui.recipe_details
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -90,6 +94,31 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_details) {
             findNavController().navigate(R.id.navigation_stepsFragment, bundle)
         }
 
+
+        // Fav button listener
+        val fav_button = requireActivity().findViewById<ImageView>(R.id.fav_button)
+        if (recipeFavOrNot(requireArguments().getLong("recipeId"))) {
+            fav_button.setImageResource(R.drawable.ic_baseline_favorite_24)
+        } else {
+            fav_button.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+        }
+
+        fav_button.setOnClickListener() {
+            Log.d("RecipeDetailFragment", "Fav button clicked")
+            val recipeId = requireArguments().getLong("recipeId")
+            if (recipeFavOrNot(recipeId)) {
+                deleteFavRecipe(recipeId)
+                fav_button.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+            } else {
+                val recipeName = recipeDetailViewModel.recipeById.value?.name ?: ""
+                val recipeImageUrl = recipeDetailViewModel.recipeById.value?.imageUri ?: ""
+                favRecipe(recipeId, recipeName, recipeImageUrl)
+                fav_button.setImageResource(R.drawable.ic_baseline_favorite_24)
+            }
+
+
+        }
+
     }
 
     override fun onDestroyView() {
@@ -102,6 +131,31 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_details) {
         val resourceId =
             context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return if (resourceId > 0) context.resources.getDimensionPixelSize(resourceId) else 0
+    }
+
+    fun recipeFavOrNot(recipeId: Long): Boolean{
+        // Retrieve JSON string from shared preferences
+        val prefs = requireContext().getSharedPreferences("FavRecipeData", AppCompatActivity.MODE_PRIVATE)
+        val recipeJson = prefs.getString("recipe${recipeId}", null)
+        return recipeJson!=null
+
+    }
+
+    fun favRecipe(recipeId: Long, recipeName: String, recipeImageUrl: String) {
+        val sharedPreferences = requireContext().getSharedPreferences("FavRecipeData", AppCompatActivity.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("recipe${recipeId}", "$recipeName,$recipeImageUrl")
+        editor.apply()
+        Toast.makeText(requireContext(), "You Favorited the recipe", Toast.LENGTH_SHORT).show()
+
+    }
+
+    fun deleteFavRecipe(recipeId: Long) {
+        val sharedPreferences = requireContext().getSharedPreferences("FavRecipeData", AppCompatActivity.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove("recipe${recipeId}")
+        editor.apply()
+        Toast.makeText(requireContext(), "You Unfavorited the recipe", Toast.LENGTH_SHORT).show()
     }
 
 
