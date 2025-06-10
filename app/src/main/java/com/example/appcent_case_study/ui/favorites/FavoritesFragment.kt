@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appcent_case_study.R
 import com.example.appcent_case_study.data.AppDatabase
@@ -49,7 +50,7 @@ class FavoritesFragment : Fragment() {
 
         // 3) Wire up the RecyclerView
         binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = GridLayoutManager(requireContext(),2)
             adapter = this@FavoritesFragment.adapter
             // optional: add padding for nav bar
             setPadding(0, 0, 0, getNavigationBarHeight(requireContext()))

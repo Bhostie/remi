@@ -30,7 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
                     )
 
                     // load initial data from the bundled asset:
-                    .createFromAsset("databases/sample_recipes.db")
+                    .createFromAsset("databases/updated_sample_recipes.db")
                     // keep this during development so Room will wipe and re-load if your schema changes
                     .fallbackToDestructiveMigration() //TODO: REMOVE IN PRODUCTION
                     .build()

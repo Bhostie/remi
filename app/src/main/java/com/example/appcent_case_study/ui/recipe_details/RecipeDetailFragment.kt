@@ -69,7 +69,7 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_details) {
             val ingredientsList = recipe.ingredients
                 .split("\n")
                 .mapNotNull { line ->
-                    val parts = line.split(";")
+                    val parts = line.split(";",":")
                     if (parts.size >= 2) {
                         val name   = parts[0].trim()
                         val amount = parts[1].trim()
