@@ -6,16 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.recipe_details.RecipeDetailFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical">
-
         <TextView
             android:id="@+id/recipeName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_gravity="center_horizontal"
             android:text="Recipe Name"
             android:textSize="24sp"
@@ -24,6 +21,9 @@
             android:id="@+id/imageView"
             android:layout_width="413dp"
             android:layout_height="207dp"
+            app:layout_constraintTop_toBottomOf="@id/recipeName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_gravity="center_horizontal"
             tools:srcCompat="@tools:sample/avatars" />
 
@@ -31,6 +31,9 @@
             android:id="@+id/ingredientsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/imageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_gravity="center_horizontal"
             android:text="Ingredients:"
             android:textSize="24sp"
@@ -40,8 +43,22 @@
             android:id="@+id/recyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            app:layout_constraintTop_toBottomOf="@id/ingredientsTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btn_start_cooking"
             tools:listitem="@layout/recycler_view_ingredient_piece" />
-    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btn_start_cooking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Start Cooking"
+        android:layout_marginBottom="8dp">
+    </Button>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

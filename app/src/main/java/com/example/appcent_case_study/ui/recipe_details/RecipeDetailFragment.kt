@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -80,7 +81,14 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_details) {
             }
         }
 
-
+        binding.btnStartCooking.setOnClickListener {
+            // Handle start cooking button click
+            val recipeId = recipeDetailViewModel.recipeById.value?.id ?: return@setOnClickListener
+            val bundle = Bundle().apply {
+                putLong("recipeId", recipeId)
+            }
+            findNavController().navigate(R.id.navigation_stepsFragment, bundle)
+        }
 
     }
 

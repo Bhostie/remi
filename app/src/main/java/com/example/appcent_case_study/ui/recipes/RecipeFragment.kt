@@ -24,7 +24,6 @@ class RecipeFragment : Fragment() {
     private var _binding: FragmentRecipesBinding? = null
     private val binding get() = _binding!!
 
-    private val navController by lazy { findNavController() }
     private lateinit var adapter: RecipeRecyclerViewAdapter
 
     // 1) We need a factory to pass our LocalRecipeRepository into the VM

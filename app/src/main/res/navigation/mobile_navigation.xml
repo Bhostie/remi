@@ -38,6 +38,15 @@
         android:name="com.example.appcent_case_study.ui.recipe_details.RecipeDetailFragment"
         android:label="@string/title_recipe_detail"
         tools:layout="@layout/fragment_recipe_details">
+        <action
+            android:id="@+id/action_navigation_recipe_detail_to_stepsFragment"
+            app:destination="@id/navigation_stepsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_stepsFragment"
+        android:name="com.example.appcent_case_study.ui.steps.StepsFragment"
+        android:label="StepsFragment"
+        tools:layout="@layout/fragment_steps"/>
 
 </navigation>
