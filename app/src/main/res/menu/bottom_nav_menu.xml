@@ -13,8 +13,8 @@
         android:title="@string/title_recipes" />
 
     <item
-        android:id="@+id/navigation_likes"
+        android:id="@+id/navigation_favorites"
         android:icon="@drawable/ic_baseline_favorite_24"
-        android:title="@string/title_likes" />
+        android:title="@string/favorites" />
 
 </menu>
