@@ -3,6 +3,7 @@ package com.example.appcent_case_study
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -37,14 +38,28 @@ class MainActivity : AppCompatActivity() {
         // Listener for navigation destination changes so we can hide or unhide the bottom nav bar
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.navigation_home, R.id.navigation_likes, R.id.navigation_recipes -> {
+                R.id.navigation_home, R.id.navigation_likes, R.id.navigation_recipes, R.id.navigation_search -> {
                     binding.navView.visibility = BottomNavigationView.VISIBLE
                 }
-
                 else -> {
                     binding.navView.visibility = BottomNavigationView.GONE
                 }
             }
+
+
+
+            // TEST ONLY, NOT ACTUAL LOGIC
+            when(destination.id){
+                R.id.navigation_stepsFragment -> {
+                    supportActionBar?.hide()
+                }
+                else -> {
+                    supportActionBar?.show()
+                }
+            }
+
+
+
         }
 
 

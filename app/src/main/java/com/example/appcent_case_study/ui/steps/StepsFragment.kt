@@ -2,6 +2,7 @@ package com.example.appcent_case_study.ui.steps
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.appcent_case_study.R

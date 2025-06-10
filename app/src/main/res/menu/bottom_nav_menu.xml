@@ -8,21 +8,13 @@
         android:title="@string/title_search" />
 
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_baseline_library_music_24"
-        android:title="@string/title_genres" />
+        android:id="@+id/navigation_recipes"
+        android:icon="@drawable/food_restaurant_svgrepo_com"
+        android:title="@string/title_recipes" />
 
     <item
         android:id="@+id/navigation_likes"
         android:icon="@drawable/ic_baseline_favorite_24"
         android:title="@string/title_likes" />
-
-    <item
-        android:id="@+id/navigation_recipes"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_recipes" />
-
-
-
 
 </menu>
