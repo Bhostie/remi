@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         // Toolbar control
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         val fav_button = findViewById<ImageView>(R.id.fav_button)
+        val ingredients_button = findViewById<ImageView>(R.id.ingredients_button)
         setSupportActionBar(toolbar)
 
         val navView: BottomNavigationView = binding.navView
@@ -61,17 +62,23 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_recipe_detail -> {
                     // Show
                     fav_button.visibility = ImageView.VISIBLE
-
-                    //fav_button.setOnClickListener {
-                        // Get the current recipe ID from the arguments
-                        //Log.d("MainActivity", "Fav button clicked")
-                    //}
-
                 }
                 else -> {
-                    fav_button.visibility = ImageView.INVISIBLE
+                    fav_button.visibility = ImageView.GONE
                 }
             }
+
+            // For tracking ingredient dialog button
+            when(destination.id) {
+                R.id.navigation_stepsFragment -> {
+                    // Show
+                    ingredients_button.visibility = ImageView.VISIBLE
+                }
+                else -> {
+                    ingredients_button.visibility = ImageView.GONE
+                }
+            }
+
 
         }
 

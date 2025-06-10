@@ -31,8 +31,21 @@
             android:background="?attr/selectableItemBackground"
             android:foreground="?android:attr/selectableItemBackground"
             android:padding="8dp"
-            android:clickable="true"
-            android:visibility="invisible"/>
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/ingredients_button"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/clipboard_text_alt_svgrepo_com"
+            android:layout_margin="15dp"
+            android:layout_gravity="end"
+            android:scaleX="4"
+            android:scaleY="4"
+            android:background="?attr/selectableItemBackground"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="8dp"
+            android:visibility="gone"/>
 
 
     </androidx.appcompat.widget.Toolbar>

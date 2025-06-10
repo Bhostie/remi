@@ -1,7 +1,9 @@
 package com.example.appcent_case_study.ui.steps
 
+import android.media.Image
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -29,14 +31,11 @@ class StepsFragment: Fragment(R.layout.fragment_steps) {
 
         _binding = FragmentStepsBinding.bind(view)
 
-
-
         // Observe Recipe Object
         stepsViewModel.recipe.observe(viewLifecycleOwner) { recipe ->
             // Update the UI with the recipe name
             binding.tvRecipeName.text = recipe.name
         }
-
 
         // Observe the steps LiveData from the ViewModel
         stepsViewModel.stepList.observe(viewLifecycleOwner) { steps ->
@@ -46,7 +45,6 @@ class StepsFragment: Fragment(R.layout.fragment_steps) {
 
             binding.tvDescription.text = steps[0].description
         }
-
 
         binding.btnNext.setOnClickListener {
             // Handle next step button click
@@ -77,9 +75,20 @@ class StepsFragment: Fragment(R.layout.fragment_steps) {
             }
         }
 
+        // Ingredients Button
+        val ingredients_button = requireActivity().findViewById<ImageView>(R.id.ingredients_button)
+        ingredients_button.setOnClickListener {
+            stepsViewModel.recipe.value?.let { recipe ->
+                val ingredientsList = recipe.ingredients // adjust based on your actual model
+                val ingredientsText = recipe.ingredients.split(",").joinToString("\n") { it.trim() }
 
-
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Ingredients")
+                    .setMessage(ingredientsText)
+                    .setPositiveButton("OK", null)
+                    .show()
+            }
+        }
 
     }
-
 }

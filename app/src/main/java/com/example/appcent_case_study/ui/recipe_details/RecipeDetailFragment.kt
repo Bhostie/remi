@@ -103,7 +103,7 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_details) {
             fav_button.setImageResource(R.drawable.ic_baseline_favorite_border_24)
         }
 
-        fav_button.setOnClickListener() {
+        fav_button.setOnClickListener {
             Log.d("RecipeDetailFragment", "Fav button clicked")
             val recipeId = requireArguments().getLong("recipeId")
             if (recipeFavOrNot(recipeId)) {
