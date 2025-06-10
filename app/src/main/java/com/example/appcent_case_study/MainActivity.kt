@@ -27,12 +27,25 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_likes
+                R.id.navigation_home, R.id.navigation_likes, R.id.navigation_recipes
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+
+        // Listener for navigation destination changes so we can hide or unhide the bottom nav bar
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.navigation_home, R.id.navigation_likes, R.id.navigation_recipes -> {
+                    binding.navView.visibility = BottomNavigationView.VISIBLE
+                }
+
+                else -> {
+                    binding.navView.visibility = BottomNavigationView.GONE
+                }
+            }
+        }
 
 
     }
