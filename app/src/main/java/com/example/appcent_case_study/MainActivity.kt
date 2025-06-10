@@ -31,6 +31,9 @@ class MainActivity : AppCompatActivity() {
         val ingredients_button = findViewById<ImageView>(R.id.ingredients_button)
         setSupportActionBar(toolbar)
 
+
+
+        // Navigation control
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
@@ -44,11 +47,10 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-
         // Listener for navigation destination changes so we can hide or unhide the bottom nav bar
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.navigation_home, R.id.navigation_likes, R.id.navigation_recipes, R.id.navigation_search -> {
+                R.id.navigation_recipes, R.id.navigation_favorites -> {
                     binding.navView.visibility = BottomNavigationView.VISIBLE
 
                 }
