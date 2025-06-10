@@ -40,6 +40,8 @@ class StepsFragment: Fragment(R.layout.fragment_steps) {
         // Observe the steps LiveData from the ViewModel
         stepsViewModel.stepList.observe(viewLifecycleOwner) { steps ->
 
+            binding.tvTotalSteps.text = "/${steps.size}"
+
             steps.sortedBy { it.number } // Sort steps by number
             binding.tvStepsTitle.text = "Step: ${steps[current_step].number}"
 

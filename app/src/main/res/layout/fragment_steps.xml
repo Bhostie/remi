@@ -30,6 +30,18 @@
         android:layout_marginTop="10sp"
         android:layout_marginStart="16dp" />
 
+    <TextView
+        android:id="@+id/tv_total_steps"
+        tools:text="/"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/tv_steps_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_recipe_name"
+        android:layout_marginTop="10sp"
+        android:layout_marginStart="4dp" />
+
     <ImageView
         android:id="@+id/imageView"
         tools:srcCompat="@tools:sample/backgrounds/scenic"
@@ -58,24 +70,30 @@
 
     <Button
         android:id="@+id/btn_previous"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="70dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_next"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/previous"
+        android:textSize="16sp"
+        android:backgroundTint="#d99c2d"
+
  />
 
     <Button
         android:id="@+id/btn_next"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="70dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
         android:text="@string/next"
-        app:iconTint="#C84E4E"
+        android:textSize="16sp"
+        android:backgroundTint="#26bd1b"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_previous" />
