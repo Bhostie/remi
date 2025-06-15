@@ -88,11 +88,16 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
         // Initialize Hand Gesture Processor
         handGestureProcessor = HandGestureProcessor(requireContext()) { gesture ->
             requireActivity().runOnUiThread {
+
+                Log.d(TAG, "Gesture detected: $gesture")
+                binding.debugText.text = "$gesture" // DEBUG ONLY
+
                 when (gesture) {
-                    GestureType.SWIPE_LEFT -> goToPreviousStep()
+                    GestureType.SWIPE_LEFT -> goToNextStep()
                     GestureType.SWIPE_RIGHT -> goToNextStep()
-                    GestureType.OPEN_PALM -> showIngredientsDialog()
-                    GestureType.DOUBLE_PALM_CLAP -> back()
+                    GestureType.OPEN_PALM_HOLD -> goToNextStep()
+                    GestureType.CLOSE_PALM_HOLD -> goToNextStep()
+                    GestureType.PINCH -> goToNextStep()
                     else -> {}
                 }
             }
@@ -415,19 +420,17 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
                 return@addListener
             }
 
-            // Use the default back camera if available, otherwise use the front camera
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             // Unbind any existing use cases before binding new ones
             cameraProvider.unbindAll()
             val availableSelector = if (
-                cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)
-            ) {
-                CameraSelector.DEFAULT_BACK_CAMERA
-            } else if (
                 cameraProvider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
             ) {
                 CameraSelector.DEFAULT_FRONT_CAMERA
+            } else if (
+                cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)
+            ) {
+                CameraSelector.DEFAULT_BACK_CAMERA
             } else {
                 throw IllegalStateException("No cameras available on this device.")
             }
