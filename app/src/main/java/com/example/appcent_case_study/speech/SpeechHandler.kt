@@ -2,6 +2,7 @@ package com.example.appcent_case_study.speech
 
 import android.content.Context
 import android.content.Intent
+import android.media.AudioManager // Added import
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -20,7 +21,11 @@ class SpeechHandler(
     private lateinit var speechRecognizerIntent: Intent
     private var isListening = false
     private var isCommandMode = false
-    private val mainHandler = Handler(Looper.getMainLooper()) // Added Handler
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    private var audioManager: AudioManager? = null // Added AudioManager
+    private var originalSystemVolume: Int = -1 // To store original volume
+    private var isMutedByApp: Boolean = false // To track if we muted
 
     companion object {
         private const val TAG = "SpeechHandler"
@@ -31,13 +36,15 @@ class SpeechHandler(
     private val commandMap: Map<List<String>, VoiceAction> = mapOf(
         listOf("next step", "next") to VoiceAction.NEXT_STEP,
         listOf("previous step", "previous", "back") to VoiceAction.PREVIOUS_STEP,
-        listOf("open ingredients", "show ingredients", "ingredients") to VoiceAction.SHOW_INGREDIENTS,
-        listOf("stop listening", "cancel", "never mind") to VoiceAction.STOP_LISTENING
-        // Add more commands and aliases here
+        listOf("open ingredients", "show ingredients") to VoiceAction.SHOW_INGREDIENTS,
+        listOf("stop listening", "cancel", "never mind") to VoiceAction.STOP_LISTENING,
+        listOf("close ingredients", "hide ingredients", "close") to VoiceAction.CLOSE_INGREDIENTS,
+        listOf("ingredients") to VoiceAction.TOGGLE_INGREDIENTS
     )
 
     init {
         if (SpeechRecognizer.isRecognitionAvailable(context)) {
+            audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager // Initialize AudioManager
             initializeSpeechRecognizer()
         } else {
             Log.e(TAG, "Speech recognition not available on this device.")
@@ -64,13 +71,16 @@ class SpeechHandler(
                 Log.d(TAG, "Beginning of speech")
             }
 
-            override fun onRmsChanged(rmsdB: Float) {}
+            override fun onRmsChanged(rmsdB: Float) {
+                if (isCommandMode) listener.onRmsChange(rmsdB)
+            }
 
             override fun onBufferReceived(buffer: ByteArray?) {}
 
             override fun onEndOfSpeech() {
                 Log.d(TAG, "End of speech")
                 isListening = false
+                unmuteSound() // Unmute sound
             }
 
             override fun onError(error: Int) {
@@ -155,12 +165,13 @@ class SpeechHandler(
                         startListeningForWakeWord()
                     } else { // Listening for wake word
                         if (spokenText.contains(WAKE_WORD)) {
+                            unmuteSound() // Unmute when wake word is detected
                             listener.onWakeWordDetected()
                             isCommandMode = true
-                            startListeningForCommand() // Listen for one command
+                            startListeningForCommand() // This will call muteSound() again
                         } else {
                             // Not the wake word, continue listening for wake word
-                            startListeningForWakeWord()
+                            startListeningForWakeWord() // This will call muteSound()
                         }
                     }
                 } else {
@@ -196,7 +207,7 @@ class SpeechHandler(
             return
         }
         if (!isListening) {
-            // isCommandMode = false; // This is now managed internally after command/error
+            muteSound() // Mute sound before starting
             Log.d(TAG, "Starting to listen for WAKE WORD.")
             speechRecognizer.startListening(speechRecognizerIntent)
         }
@@ -208,7 +219,7 @@ class SpeechHandler(
             return
         }
         if (!isListening) {
-            // isCommandMode = true; // This is now managed internally when wake word detected
+            muteSound() // Mute sound before starting
             Log.d(TAG, "Starting to listen for COMMAND.")
             speechRecognizer.startListening(speechRecognizerIntent)
         }
@@ -218,14 +229,19 @@ class SpeechHandler(
         if (::speechRecognizer.isInitialized && isListening) {
             speechRecognizer.stopListening()
             isListening = false
+            unmuteSound() // Unmute sound
             Log.d(TAG, "Speech recognizer stopped listening explicitly.")
+        } else if (::speechRecognizer.isInitialized) { // If not listening but we might have muted
+            unmuteSound()
         }
     }
 
     fun cancelListening() {
         if (::speechRecognizer.isInitialized) {
+            val wasListening = isListening
             speechRecognizer.cancel()
             isListening = false
+            unmuteSound() // Unmute sound
             Log.d(TAG, "Speech recognizer cancelled.")
         }
     }
@@ -233,20 +249,49 @@ class SpeechHandler(
     fun destroy() {
         if (::speechRecognizer.isInitialized) {
             speechRecognizer.stopListening() // Stop any active listening
+            unmuteSound() // Ensure sound is unmuted on destroy
             speechRecognizer.destroy()
             Log.d(TAG, "Speech recognizer destroyed")
         }
     }
 
-    // This function might not be strictly needed by the fragment anymore
-    // but can be kept for internal logic or debugging if SpeechHandler needs to expose it.
-    // For now, let's assume it's internal.
-    // fun isCommandModeActive(): Boolean = isCommandMode
-
-    // This function should ideally be managed internally by SpeechHandler.
-    // The fragment should not need to set this directly with the new flow.
-    internal fun setCommandMode(active: Boolean) { // Made internal or could be private
-        isCommandMode = active
-        Log.d(TAG, "Command mode set to: $active")
+    // Helper function to mute system sounds
+    private fun muteSound() {
+        if (audioManager == null || isMutedByApp) return // Already muted by us or no audio manager
+        try {
+            originalSystemVolume = audioManager!!.getStreamVolume(AudioManager.STREAM_SYSTEM)
+            // Only mute if not already silent (originalSystemVolume > 0)
+            if (originalSystemVolume > 0) {
+                audioManager!!.setStreamVolume(AudioManager.STREAM_SYSTEM, 0, 0)
+                isMutedByApp = true
+                Log.d(TAG, "Muted system sounds for speech recognition. Original volume: $originalSystemVolume")
+            } else {
+                // System sound is already 0 or less (error), so we don't claim to have muted it.
+                isMutedByApp = false
+                Log.d(TAG, "System sounds already muted or volume is zero. Current volume: $originalSystemVolume")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error muting sound: ${e.message}")
+            isMutedByApp = false // Ensure we don't think we muted if an error occurred
+        }
     }
+
+    // Helper function to unmute system sounds
+    private fun unmuteSound() {
+        if (audioManager == null || !isMutedByApp) return // Only unmute if we muted it and have an audio manager
+        try {
+            if (originalSystemVolume != -1) { // Check if originalSystemVolume was set
+                audioManager!!.setStreamVolume(AudioManager.STREAM_SYSTEM, originalSystemVolume, 0)
+                Log.d(TAG, "Unmuted system sounds. Restored to volume: $originalSystemVolume")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error unmuting sound: ${e.message}")
+        } finally {
+            isMutedByApp = false
+            originalSystemVolume = -1 // Reset
+        }
+    }
+
+
+
 }

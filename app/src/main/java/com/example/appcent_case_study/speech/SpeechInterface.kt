@@ -5,4 +5,5 @@ interface SpeechInterface {
     fun onVoiceAction(action: VoiceAction) // Changed from onCommandReceived
     fun onError(errorMessage: String)
     fun requestAudioPermission()
+    fun onRmsChange(rmsdB: Float)
 }
