@@ -131,15 +131,15 @@ class SpeechHandler(
                         speechRecognizer.cancel()
                     }
 
-                    if (error != SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) {
+                    if (error != SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS && error != SpeechRecognizer.ERROR_RECOGNIZER_BUSY)  {
                         // Post the restart to the main looper to decouple it slightly
                         // This gives the recognizer a moment to settle after an error.
-//                        mainHandler.post {
-//                            if (::speechRecognizer.isInitialized) { // Check again, could be destroyed
-//                                Log.d(TAG, "Attempting to restart listening for wake word after error.")
-//                                startListeningForWakeWord()
-//                            }
-//                        }
+                        mainHandler.post {
+                            if (::speechRecognizer.isInitialized) { // Ensure it's still initialized
+                                Log.d(TAG, "Attempting to restart listening for wake word after error.")
+                                startListeningForWakeWord()
+                            }
+                        }
                     }
                 }
             }

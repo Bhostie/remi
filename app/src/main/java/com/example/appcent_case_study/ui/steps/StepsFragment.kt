@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -272,7 +271,6 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
             } else {
                 // Handle permission denied
                 hasAudioPermission = false
-                Toast.makeText(requireContext(), "Audio Permission required to use speech recognition", Toast.LENGTH_SHORT).show()
                 Log.d(TAG, "Audio permission denied")
             }
         }
@@ -298,46 +296,33 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
             VoiceAction.NEXT_STEP -> {
                 Log.d(TAG, "Executing: Next Step")
                 binding.btnNext.performClick()
-                Toast.makeText(requireContext(), "Going to next step", Toast.LENGTH_SHORT).show()
             }
             VoiceAction.PREVIOUS_STEP -> {
                 Log.d(TAG, "Executing: Previous Step")
                 binding.btnPrevious.performClick()
-                Toast.makeText(requireContext(), "Going to previous step", Toast.LENGTH_SHORT).show()
             }
             VoiceAction.SHOW_INGREDIENTS -> {
                 Log.d(TAG, "Executing: Show Ingredients")
                 showIngredientsDialog()
-                Toast.makeText(requireContext(), "Showing ingredients", Toast.LENGTH_SHORT).show()
             }
             VoiceAction.CLOSE_INGREDIENTS -> {
                 Log.d(TAG, "Executing: Close Ingredients")
                 closeIngredientsDialog()
-                Toast.makeText(requireContext(), "Closing ingredients", Toast.LENGTH_SHORT).show()
             }
             VoiceAction.TOGGLE_INGREDIENTS -> {
                 Log.d(TAG, "Executing: Toggle Ingredients")
                 toggleIngredientsDialog()
-                Toast.makeText(requireContext(), "Toggling ingredients", Toast.LENGTH_SHORT).show()
             }
             VoiceAction.STOP_LISTENING -> {
                 Log.d(TAG, "Executing: Stop Listening")
-                Toast.makeText(requireContext(), "Okay, stopping.", Toast.LENGTH_SHORT).show()
-                // SpeechHandler already handles reverting to wake word mode.
-                // If STOP_LISTENING implies truly stopping all voice interaction until manually restarted,
-                // SpeechHandler might need a more explicit stop/pause that isn't just reverting to wake word.
-                // For now, assuming it means "cancel current command listening and go back to wake word".
             }
             VoiceAction.UNKNOWN_COMMAND -> {
                 Log.d(TAG, "Unknown command")
                 flashOutlineRed()
-                Toast.makeText(requireContext(), "Sorry, I didn't understand that.", Toast.LENGTH_SHORT).show()
             }
             VoiceAction.NO_SPEECH_INPUT -> {
                 Log.d(TAG, "No speech input detected or no match in command mode.")
                 flashOutlineGrey()
-
-                Toast.makeText(requireContext(), "Didn't catch that. Say 'Remy' again.", Toast.LENGTH_SHORT).show()
             }
         }
         // No need to manage speechHandler's listening state here.
@@ -351,7 +336,6 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
         if (errorMessage != "No speech match" && errorMessage != "No speech input" && errorMessage!= "Client side error") {
             // Avoid double toast if NO_SPEECH_INPUT already handled by onVoiceAction
             flashOutlineRed()
-            Toast.makeText(requireContext(), "Speech error: $errorMessage. Say 'Remy' to try again.", Toast.LENGTH_LONG).show()
         }
 
 
