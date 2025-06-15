@@ -41,6 +41,12 @@ class HandGestureProcessor(
         handLandmarker = HandLandmarker.createFromOptions(context, options)
     }
 
+
+    // palm detection variables
+    private var lastOpenPalmStartTime: Long = 0
+    private var palmHeld = false
+    private val palmHoldDurationMillis = 2000L // 2 seconds
+
     fun detectAsync(mpImage: MPImage) {
         handLandmarker.detectAsync(mpImage, SystemClock.uptimeMillis())
     }
@@ -66,8 +72,24 @@ class HandGestureProcessor(
         // Gesture 2: Open Palm Detection
         val dist1 = distance(landmarks[4], landmarks[8])  // thumb to index
         val dist2 = distance(landmarks[8], landmarks[12]) // index to middle
-        if (dist1 > palmThreshold && dist2 > palmThreshold) {
-            onGestureDetected(GestureType.OPEN_PALM)
+        val isPalmOpen = dist1 > palmThreshold && dist2 > palmThreshold
+
+        if (isPalmOpen) {
+            val now = SystemClock.uptimeMillis()
+
+            if (!palmHeld) {
+                // Start tracking duration
+                lastOpenPalmStartTime = now
+                palmHeld = true
+            } else {
+                // Already tracking, check if enough time passed
+                if (now - lastOpenPalmStartTime >= palmHoldDurationMillis) {
+                    onGestureDetected(GestureType.OPEN_PALM)
+                    palmHeld = false  // Reset so it doesn't keep triggering
+                }
+            }
+        } else {
+            palmHeld = false
         }
     }
 
