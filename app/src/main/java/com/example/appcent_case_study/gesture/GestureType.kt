@@ -4,5 +4,6 @@ enum class GestureType {
     SWIPE_LEFT,
     SWIPE_RIGHT,
     OPEN_PALM,
-    UNKNOWN
+    UNKNOWN,
+    DOUBLE_PALM_CLAP
 }

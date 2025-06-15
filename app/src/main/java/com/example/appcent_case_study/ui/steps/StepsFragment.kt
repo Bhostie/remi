@@ -92,6 +92,7 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
                     GestureType.SWIPE_LEFT -> goToPreviousStep()
                     GestureType.SWIPE_RIGHT -> goToNextStep()
                     GestureType.OPEN_PALM -> showIngredientsDialog()
+                    GestureType.DOUBLE_PALM_CLAP -> back()
                     else -> {}
                 }
             }
@@ -381,6 +382,10 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
             binding.tvStepsTitle.text = "Step: ${previousStep.number}"
             binding.tvDescription.text = previousStep.description
         }
+    }
+
+    private fun back(){
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 
     private fun startCamera() {
