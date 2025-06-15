@@ -65,6 +65,13 @@ class HandGestureProcessor(
     private var pinchStartTime = 0L             // when pinch first detected
     private val pinchHoldDuration = 500L        // ms to hold
     private var pinchActive = false             // are we tracking a pinch?
+    private enum class PinchState { PINCHED, RELEASED }
+    private var lastPinchState = PinchState.RELEASED
+    private var transitionTimestamps = mutableListOf<Long>()
+    private val minTransitions = 4           // PINCH→REL→PINCH→REL
+    private val doublePinchCooldownMs = 1000L
+    private var lastDoublePinchTime = 0L
+
 
 
 
@@ -84,17 +91,6 @@ class HandGestureProcessor(
         val x = landmarks[0].x()
 
 
-        // === GESTURE 1: SWIPE DETECTION ===
-        swipeHistory.add(x)
-        if (swipeHistory.size > maxHistorySize) swipeHistory.removeFirst()
-
-        val delta = swipeHistory.last - swipeHistory.first
-        if (abs(delta) > swipeThreshold) {
-            val gesture = if (delta > 0) GestureType.SWIPE_RIGHT else GestureType.SWIPE_LEFT
-            triggerGesture(gesture)
-            swipeHistory.clear()
-            return
-        }
 
         // === Palm Geometry ===
         val dist1 = distance(landmarks[4], landmarks[8])   // thumb to index
@@ -115,49 +111,26 @@ class HandGestureProcessor(
             openPalmHeld = false
         }
 
-        // === GESTURE 3: DOUBLE PALM CLAP (open-close-open-close in time window) ===
-        val currentPalmState = when {
-            isPalmOpen -> PalmState.OPEN
-            else -> PalmState.CLOSED
-        }
-
-        if (currentPalmState != lastPalmState) {
-            gestureSequence.add(now)
-
-            // Retain only recent transitions within the window
-            gestureSequence = gestureSequence.filter { now - it <= gestureWindowMs }.toMutableList()
-
-            if (gestureSequence.size >= minPairs * 2) {
-                triggerGesture(GestureType.DOUBLE_PALM_CLAP)
-                gestureSequence.clear()
-            }
-
-            lastPalmState = currentPalmState
-        }
-
-        // Initialize palm state if it was unknown
-        if (lastPalmState == PalmState.UNKNOWN) {
-            lastPalmState = currentPalmState
-        }
-
         // === GESTURE 4: PINCH DETECTION ===
-        // --- Pinch Detection ---
         val thumbTip = landmarks[4]
         val indexTip = landmarks[8]
         val pinchDist = distance(thumbTip, indexTip)
-        val isPinching = pinchDist < pinchThreshold
 
-        if (isPinching) {
-            val now = SystemClock.uptimeMillis()
-            if (!pinchActive) {
-                pinchStartTime = now
-                pinchActive = true
-            } else if (now - pinchStartTime >= pinchHoldDuration) {
-                triggerGesture(GestureType.PINCH)
-                pinchActive = false
+        val isPinched = pinchDist < pinchThreshold
+        val currentState = if (isPinched) PinchState.PINCHED else PinchState.RELEASED
+        if (currentState != lastPinchState) {
+            transitionTimestamps.add(now)
+            transitionTimestamps = transitionTimestamps
+                .filter { now - it <= gestureWindowMs }.toMutableList()
+
+            if (transitionTimestamps.size >= minTransitions) {
+                if (now - lastDoublePinchTime >= doublePinchCooldownMs) {
+                    onGestureDetected(GestureType.PINCH)
+                    lastDoublePinchTime = now
+                }
+                transitionTimestamps.clear()
             }
-        } else {
-            pinchActive = false
+            lastPinchState = currentState
         }
 
         // === GESTURE 5: CLOSE PALM HOLD (3sec) ===
@@ -174,8 +147,6 @@ class HandGestureProcessor(
         } else {
             closePalmHeld = false
         }
-
-
 
         // === NO HAND OR UNKOWN GESTURE ===
         if (result.landmarks().isEmpty()) {

@@ -93,12 +93,10 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
                 binding.debugText.text = "$gesture" // DEBUG ONLY
 
                 when (gesture) {
-                    GestureType.SWIPE_LEFT -> goToNextStep()
-                    GestureType.SWIPE_RIGHT -> goToNextStep()
-                    GestureType.OPEN_PALM_HOLD -> goToNextStep()
-                    GestureType.CLOSE_PALM_HOLD -> goToNextStep()
                     GestureType.PINCH -> goToNextStep()
-                    else -> {}
+                    GestureType.CLOSE_PALM_HOLD -> goToPreviousStep()
+                    GestureType.OPEN_PALM_HOLD -> toggleIngredientsDialog()
+                    else -> { binding.debugText.text = "UNKNOWN" }
                 }
             }
         }
