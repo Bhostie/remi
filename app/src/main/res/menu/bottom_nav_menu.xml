@@ -21,4 +21,9 @@
         android:icon="@drawable/ic_baseline_favorite_24"
         android:title="@string/favorites" />
 
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/settings_gear_svgrepo_com"
+        android:title="Settings" />
+
 </menu>

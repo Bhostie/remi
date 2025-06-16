@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.appcent_case_study.ui.settings.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
         android:id="@+id/navigation_search"
         android:name="com.example.appcent_case_study.ui.search.SearchFragment"
         android:label="@string/title_search"

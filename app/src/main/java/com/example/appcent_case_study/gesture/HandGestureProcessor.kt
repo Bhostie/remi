@@ -33,9 +33,9 @@ class HandGestureProcessor(
         val options = HandLandmarker.HandLandmarkerOptions.builder()
             .setBaseOptions(baseOptions)
             .setRunningMode(RunningMode.LIVE_STREAM)
-            .setMinHandDetectionConfidence(0.8f)
-            .setMinTrackingConfidence(0.8f)
-            .setMinHandPresenceConfidence(0.85f)
+            .setMinHandDetectionConfidence(0.6f)
+            .setMinTrackingConfidence(0.6f)
+            .setMinHandPresenceConfidence(0.6f)
             .setResultListener(::onHandResult)
             .build()
 
