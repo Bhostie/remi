@@ -1,18 +1,19 @@
 package com.example.appcent_case_study.ui.recipes
 
 import android.annotation.SuppressLint
+import androidx.appcompat.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
+import android.widget.CheckBox
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appcent_case_study.R
 import com.example.appcent_case_study.data.AppDatabase
 import com.example.appcent_case_study.data.LocalRecipeRepository
@@ -26,6 +27,12 @@ class RecipeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: RecipeRecyclerViewAdapter
+
+    private val prefs by lazy {
+        requireContext().getSharedPreferences("SettingsData", Context.MODE_PRIVATE)
+    }
+
+
 
     // 1) We need a factory to pass our LocalRecipeRepository into the VM
     private val recipeViewModel by lazy {
@@ -59,6 +66,9 @@ class RecipeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val shown = prefs.getBoolean("tips_shown", false)
+        if (!shown) showHowToDialog()
+
         // **NAVIGATION**: when an item is clicked, navigate with the recipeId
         adapter.onItemClick = { recipe ->
             Log.d("RecipeFragment", "Clicked on recipe: ${recipe.name}")
@@ -86,5 +96,33 @@ class RecipeFragment : Fragment() {
         val resourceId =
             context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return if (resourceId > 0) context.resources.getDimensionPixelSize(resourceId) else 0
+    }
+
+    private fun showHowToDialog() {
+        // 1) Inflate your custom layout (ensure this XML lives in res/layout/dialog_how_to_use.xml)
+        val dialogView = layoutInflater.inflate(
+            R.layout.dialog_how_to_use,    // your XML file
+            null,
+            false
+        )
+        // 2) Find the CheckBox inside *that* view
+        val neverShowAgain = dialogView.findViewById<CheckBox>(
+            R.id.cbDontShowAgain
+        )
+
+        // 3) Build & show the dialog
+        AlertDialog.Builder(requireContext())
+            .setTitle("How to Use")
+            .setView(dialogView)  // now unambiguously calls setView(View)
+            .setPositiveButton("Got it") { dialog: DialogInterface, _ ->
+                if (neverShowAgain.isChecked) {
+                    prefs.edit()
+                        .putBoolean("tips_shown", true)
+                        .apply()
+                }
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .show()
     }
 }

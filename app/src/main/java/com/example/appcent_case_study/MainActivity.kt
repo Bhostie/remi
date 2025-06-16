@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_recipes, R.id.navigation_favorites
+                R.id.navigation_recipes, R.id.navigation_favorites, R.id.navigation_settings
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         // Listener for navigation destination changes so we can hide or unhide the bottom nav bar
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.navigation_recipes, R.id.navigation_favorites -> {
+                R.id.navigation_recipes, R.id.navigation_favorites, R.id.navigation_settings -> {
                     binding.navView.visibility = BottomNavigationView.VISIBLE
 
                 }
