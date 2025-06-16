@@ -3,6 +3,11 @@ package com.example.appcent_case_study.ui.steps
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +15,11 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -18,9 +28,14 @@ import com.example.appcent_case_study.R
 import com.example.appcent_case_study.data.AppDatabase
 import com.example.appcent_case_study.data.LocalRecipeRepository
 import com.example.appcent_case_study.databinding.FragmentStepsBinding
+import com.example.appcent_case_study.gesture.GestureType
+import com.example.appcent_case_study.gesture.HandGestureProcessor
 import com.example.appcent_case_study.speech.SpeechHandler
 import com.example.appcent_case_study.speech.SpeechInterface
 import com.example.appcent_case_study.speech.VoiceAction
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.mediapipe.framework.image.BitmapImageBuilder
+import java.io.ByteArrayOutputStream
 
 class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
     // This fragment will handle the steps of the recipe
@@ -49,6 +64,12 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
 
     private var current_step: Int = 0
 
+
+    // Gesture stuff
+    private lateinit var handGestureProcessor: HandGestureProcessor
+    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         _binding = FragmentStepsBinding.bind(view)
@@ -63,6 +84,24 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
         speechHandler = SpeechHandler(requireContext(), this)
         checkAndRequestPermissions()
 
+
+        // Initialize Hand Gesture Processor
+        handGestureProcessor = HandGestureProcessor(requireContext()) { gesture ->
+            requireActivity().runOnUiThread {
+
+                Log.d(TAG, "Gesture detected: $gesture")
+                binding.debugText.text = "$gesture" // DEBUG ONLY
+
+                when (gesture) {
+                    GestureType.PINCH -> goToNextStep()
+                    GestureType.CLOSE_PALM_HOLD -> goToPreviousStep()
+                    GestureType.OPEN_PALM_HOLD -> toggleIngredientsDialog()
+                    else -> { binding.debugText.text = "UNKNOWN" }
+                }
+            }
+        }
+        startCamera()
+
         // Observe the steps LiveData from the ViewModel
         stepsViewModel.stepList.observe(viewLifecycleOwner) { steps ->
 
@@ -75,32 +114,10 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
         }
 
         binding.btnNext.setOnClickListener {
-            // Handle next step button click
-            val currentStep = stepsViewModel.stepList.value?.find { it.number == binding.tvStepsTitle.text.split(": ")[1].toInt() }
-            if (currentStep != null) {
-                val nextStepNumber = currentStep.number + 1
-                val nextStep = stepsViewModel.stepList.value?.find { it.number == nextStepNumber }
-                if (nextStep != null) {
-                    binding.tvStepsTitle.text = "Step: ${nextStep.number}"
-                    binding.tvDescription.text = nextStep.description
-                } else {
-                    // No more steps, maybe show a message or reset
-                }
-            }
+            goToNextStep()
         }
         binding.btnPrevious.setOnClickListener {
-            // Handle previous step button click
-            val currentStep = stepsViewModel.stepList.value?.find { it.number == binding.tvStepsTitle.text.split(": ")[1].toInt() }
-            if (currentStep != null) {
-                val previousStepNumber = currentStep.number - 1
-                val previousStep = stepsViewModel.stepList.value?.find { it.number == previousStepNumber }
-                if (previousStep != null) {
-                    binding.tvStepsTitle.text = "Step: ${previousStep.number}"
-                    binding.tvDescription.text = previousStep.description
-                } else {
-                    // No previous step, maybe show a message or reset
-                }
-            }
+           goToPreviousStep()
         }
 
         // Ingredients Button
@@ -170,6 +187,7 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
         if (::speechHandler.isInitialized) {
             speechHandler.cancelListening() // Use cancel to stop immediately and free resources
         }
+        cameraProviderFuture.get().unbindAll()
     }
 
     override fun onDestroyView() {
@@ -179,6 +197,7 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
         }
         _binding = null // Ensure binding is nulled here
         super.onDestroyView()
+        cameraProviderFuture.get().unbindAll()
     }
 
     // --- Speech stuff ---
@@ -342,5 +361,107 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
         // SpeechHandler will attempt to restart listening for the wake word on most errors.
         // If permissions error, requestAudioPermission() was called.
         // Fragment doesn't need to manage restart logic here.
+    }
+
+    private fun goToNextStep() {
+        val currentStep = stepsViewModel.stepList.value?.find {
+            it.number == binding.tvStepsTitle.text.split(": ")[1].toInt()
+        }
+        val nextStepNumber = currentStep?.number?.plus(1)
+        val nextStep = stepsViewModel.stepList.value?.find { it.number == nextStepNumber }
+        if (nextStep != null) {
+            binding.tvStepsTitle.text = "Step: ${nextStep.number}"
+            binding.tvDescription.text = nextStep.description
+        }
+    }
+
+    private fun goToPreviousStep() {
+        val currentStep = stepsViewModel.stepList.value?.find {
+            it.number == binding.tvStepsTitle.text.split(": ")[1].toInt()
+        }
+        val previousStepNumber = currentStep?.number?.minus(1)
+        val previousStep = stepsViewModel.stepList.value?.find { it.number == previousStepNumber }
+        if (previousStep != null) {
+            binding.tvStepsTitle.text = "Step: ${previousStep.number}"
+            binding.tvDescription.text = previousStep.description
+        }
+    }
+
+    private fun back(){
+        requireActivity().onBackPressedDispatcher.onBackPressed()
+    }
+
+    private fun startCamera() {
+        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
+            val preview = Preview.Builder().build().also {
+                it.setSurfaceProvider(binding.previewView.surfaceProvider)
+            }
+
+            val analyzer = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+                .also {
+                    it.setAnalyzer(ContextCompat.getMainExecutor(requireContext())) { imageProxy ->
+                        processImage(imageProxy)
+                    }
+                }
+
+            // Check for camera permissions
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    android.Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.e(TAG, "Camera permission not granted")
+                return@addListener
+            }
+
+
+            // Unbind any existing use cases before binding new ones
+            cameraProvider.unbindAll()
+            val availableSelector = if (
+                cameraProvider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
+            ) {
+                CameraSelector.DEFAULT_FRONT_CAMERA
+            } else if (
+                cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)
+            ) {
+                CameraSelector.DEFAULT_BACK_CAMERA
+            } else {
+                throw IllegalStateException("No cameras available on this device.")
+            }
+
+            // Bind the camera to the lifecycle
+            cameraProvider.bindToLifecycle(this, availableSelector, preview, analyzer)
+            Log.d(TAG, "Camera started successfully")
+        }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun processImage(imageProxy: ImageProxy) {
+        val bitmap = toBitmap(imageProxy)
+        val mpImage = BitmapImageBuilder(bitmap).build()
+        handGestureProcessor.detectAsync(mpImage)
+        imageProxy.close()
+    }
+
+    private fun toBitmap(image: ImageProxy): Bitmap {
+        val yBuffer = image.planes[0].buffer
+        val vuBuffer = image.planes[2].buffer
+
+        val ySize = yBuffer.remaining()
+        val vuSize = vuBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + vuSize)
+
+        yBuffer.get(nv21, 0, ySize)
+        vuBuffer.get(nv21, ySize, vuSize)
+
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, image.width, image.height), 90, out)
+        val yuv = out.toByteArray()
+        return BitmapFactory.decodeByteArray(yuv, 0, yuv.size)
     }
 }
