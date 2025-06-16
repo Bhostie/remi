@@ -20,7 +20,8 @@
         app:layout_constraintTop_toBottomOf="@id/previewView"
         app:layout_constraintStart_toStartOf="@id/previewView"
         android:layout_marginTop="10sp"
-        android:layout_marginStart="16dp" />
+        android:layout_marginStart="16dp"
+        android:visibility="gone"/>
 
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
@@ -31,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_steps_title"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:visibility="visible" /> <!-- Hidden -->
+        android:visibility="invisible" /> <!-- Hidden -->
 
 
     <TextView
@@ -81,7 +82,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_steps_title"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:contentDescription="TODO" />
 
     <TextView

@@ -2,6 +2,7 @@ package com.example.appcent_case_study.ui.steps
 
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -24,6 +25,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.appcent_case_study.R
 import com.example.appcent_case_study.data.AppDatabase
 import com.example.appcent_case_study.data.LocalRecipeRepository
@@ -63,13 +66,14 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
     }
 
     private var current_step: Int = 0
-
+    private var total_steps: Int = 0
 
     // Gesture stuff
     private lateinit var handGestureProcessor: HandGestureProcessor
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
 
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         _binding = FragmentStepsBinding.bind(view)
@@ -104,14 +108,35 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
 
         // Observe the steps LiveData from the ViewModel
         stepsViewModel.stepList.observe(viewLifecycleOwner) { steps ->
-
+            total_steps = steps.size
+            setButtonVisibility(0)
             binding.tvTotalSteps.text = "/${steps.size}"
 
             steps.sortedBy { it.number } // Sort steps by number
             binding.tvStepsTitle.text = "Step: ${steps[current_step].number}"
 
             binding.tvDescription.text = steps[0].description
+
+            // Set up the step image
+            // build the asset URI
+            val assetUri = steps[current_step].mediaUri
+                ?.takeIf { it.isNotBlank() }
+                ?.let { "file:///android_asset/step_images/$it" }
+            // fallback if your imageUri was already a full URI:
+                ?: R.drawable.ic_dashboard_black_24dp
+
+            // 2) bind imageUri (if null or empty, you might load a placeholder)
+            Glide.with(binding.imageView.context)
+                .load(assetUri)
+                .centerCrop()
+                .placeholder(R.drawable.ic_dashboard_black_24dp)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.imageView)
+
+
         }
+
 
         binding.btnNext.setOnClickListener {
             goToNextStep()
@@ -125,6 +150,8 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
         ingredients_button.setOnClickListener {
             showIngredientsDialog()
         }
+
+
 
     }
 
@@ -373,6 +400,26 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
             binding.tvStepsTitle.text = "Step: ${nextStep.number}"
             binding.tvDescription.text = nextStep.description
         }
+
+        // Set up the step image
+        // build the asset URI
+        val assetUri = nextStep?.mediaUri
+            ?.takeIf { it.isNotBlank() }
+            ?.let { "file:///android_asset/step_images/$it" }
+        // fallback if your imageUri was already a full URI:
+            ?: R.drawable.ic_dashboard_black_24dp
+
+        // 2) bind imageUri (if null or empty, you might load a placeholder)
+        Glide.with(binding.imageView.context)
+            .load(assetUri)
+            .centerCrop()
+            .placeholder(R.drawable.ic_dashboard_black_24dp)
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(binding.imageView)
+        if (currentStep != null) {
+            setButtonVisibility(currentStep.number)
+        }
     }
 
     private fun goToPreviousStep() {
@@ -385,7 +432,30 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
             binding.tvStepsTitle.text = "Step: ${previousStep.number}"
             binding.tvDescription.text = previousStep.description
         }
+
+        // Set up the step image
+        // build the asset URI
+        val assetUri = previousStep?.mediaUri
+            ?.takeIf { it.isNotBlank() }
+            ?.let { "file:///android_asset/step_images/$it" }
+        // fallback if your imageUri was already a full URI:
+            ?: R.drawable.ic_dashboard_black_24dp
+
+        // 2) bind imageUri (if null or empty, you might load a placeholder)
+        Glide.with(binding.imageView.context)
+            .load(assetUri)
+            .centerCrop()
+            .placeholder(R.drawable.ic_dashboard_black_24dp)
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(binding.imageView)
+
+        if (currentStep != null) {
+            setButtonVisibility(currentStep.number-2)
+        }
     }
+
+
 
     private fun back(){
         requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -444,6 +514,14 @@ class StepsFragment: Fragment(R.layout.fragment_steps), SpeechInterface{
         val mpImage = BitmapImageBuilder(bitmap).build()
         handGestureProcessor.detectAsync(mpImage)
         imageProxy.close()
+    }
+
+
+    private fun setButtonVisibility(currentStep:Int) {
+
+        Log.d(TAG, "Setting button visibility for step: ${currentStep+1}   of $total_steps")
+        binding.btnPrevious.visibility = if (currentStep+1 > 1) View.VISIBLE else View.INVISIBLE
+        binding.btnNext.visibility = if (currentStep+1 < total_steps ) View.VISIBLE else View.INVISIBLE
     }
 
     private fun toBitmap(image: ImageProxy): Bitmap {
