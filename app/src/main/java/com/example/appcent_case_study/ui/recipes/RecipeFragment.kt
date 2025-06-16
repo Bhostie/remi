@@ -1,6 +1,7 @@
 package com.example.appcent_case_study.ui.recipes
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -99,30 +100,32 @@ class RecipeFragment : Fragment() {
     }
 
     private fun showHowToDialog() {
-        // 1) Inflate your custom layout (ensure this XML lives in res/layout/dialog_how_to_use.xml)
-        val dialogView = layoutInflater.inflate(
-            R.layout.dialog_how_to_use,    // your XML file
-            null,
-            false
-        )
-        // 2) Find the CheckBox inside *that* view
-        val neverShowAgain = dialogView.findViewById<CheckBox>(
-            R.id.cbDontShowAgain
-        )
+        // Inflate your custom layout
+        val dialogView = layoutInflater.inflate(R.layout.dialog_how_to_use, null, false)
 
-        // 3) Build & show the dialog
-        AlertDialog.Builder(requireContext())
-            .setTitle("How to Use")
-            .setView(dialogView)  // now unambiguously calls setView(View)
-            .setPositiveButton("Got it") { dialog: DialogInterface, _ ->
-                if (neverShowAgain.isChecked) {
-                    prefs.edit()
-                        .putBoolean("tips_shown", true)
-                        .apply()
-                }
-                dialog.dismiss()
+        // Find the CheckBox in the custom layout
+        val neverShowAgain = dialogView.findViewById<CheckBox>(R.id.cbDontShowAgain)
+
+        // Create a Dialog and set the custom view
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(dialogView)
+
+        // Optional: Remove default dialog background to avoid cornered shape
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Handle the "Got it" button click
+        dialogView.findViewById<CheckBox>(R.id.cbDontShowAgain).setOnClickListener {
+            if (neverShowAgain.isChecked) {
+                Log.d("RecipeFragment", "User opted to never show this dialog again")
+                prefs.edit()
+                    .putBoolean("tips_shown", true)
+                    .apply()
             }
-            .setCancelable(false)
-            .show()
+            dialog.dismiss()
+        }
+
+        // Show the dialog
+        dialog.setCancelable(true)
+        dialog.show()
     }
 }
